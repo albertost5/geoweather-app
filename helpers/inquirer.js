@@ -44,10 +44,25 @@ async function pause() {
     }])
 }
 
+async function readInputCity() {
+    const { city } = await inquirer.prompt([{
+        type: 'input',
+        name: 'city',
+        message: 'Enter a city: ',
+        validate(value) {
+            if( value == '' ) return 'Please enter a city, the field can not be blank.'.red
+            return true;
+        }
+    }]);
+
+    return city.trim();
+}
+
 
 
 
 module.exports = {
     showMenu,
-    pause
+    pause,
+    readInputCity
 }
