@@ -3,7 +3,7 @@ const inquirer = require('inquirer');
 
 const optionsMenu = ['Exit', 'Find a place', 'Records'];
 
-const questionsMenu = {
+const questionsMenu = [{
     type: 'list',
     name: 'option',
     message: 'What you want to do? ',
@@ -21,7 +21,7 @@ const questionsMenu = {
             name: `${ '3.'.green } ${ optionsMenu[0] }`
         }
     ]
-}
+}];
 
 async function showMenu() {
     console.clear();
@@ -33,8 +33,6 @@ async function showMenu() {
 
     return option;
 }
-
-
 
 async function pause() {
     const { pause } = await inquirer.prompt([{
@@ -58,11 +56,35 @@ async function readInputCity() {
     return city.trim();
 }
 
+async function showPlaces( places  = [] ) {
 
+    const choices = places.map(( place, index ) => {
+        const i = index + 1;;
+        return {
+            value: place.id,
+            name: `${ i }. `.green + place.name
 
+        }
+    });
+
+    choices.unshift({
+        value: 0,
+        name: '0. '.green + 'Cancel'
+    });
+
+    const { place_id } = await inquirer.prompt([{
+        type: 'list',
+        name: 'place_id',
+        message: 'Wich place do you want to get geoweather information?',
+        choices: choices
+    }]);
+    
+    return place_id;
+}
 
 module.exports = {
     showMenu,
     pause,
-    readInputCity
+    readInputCity,
+    showPlaces
 }

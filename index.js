@@ -1,4 +1,4 @@
-const { showMenu, pause, readInputCity } = require('./helpers/inquirer');
+const { showMenu, pause, readInputCity, showPlaces } = require('./helpers/inquirer');
 const Search = require('./models/search');
 
 const main = async() => {
@@ -12,16 +12,28 @@ const main = async() => {
         switch (optSelected) {
             case 1:
                 // ASK FOR A PLACE/CITY
-                const city = await readInputCity();
-                console.log({ city });
-                // CALL API TO GET THE RESULTS
-                const cities = await search.geoLocations(city);
-                console.log({ cities });
+                const input = await readInputCity();
 
-                // show the cities to select one of them
-                // call the endpoint to get the weather of the city selected
-                // RESPONSE with all the info of the city (weather and geolocation)
-                
+                // CALL API TO GET THE RESULTS
+                const cities = await search.geoLocations(input);
+
+                // SHOW PLACES TO SELECT ONE OF THEM
+                const cityId = await showPlaces(cities);
+
+                const { id, name, longitude, latitude } = cities.find( city => city.id === cityId );
+
+                // CALL WEATHER API TO GET THE CITY'S WEATHER
+                const { temp, min, max, desc } = await search.weatherForecast(longitude, latitude);
+               
+                // RESPONSE (geolocation + weather)
+                console.log(`Information of the city: `.green);
+                console.log('City: ', name);
+                console.log('Latitude: ', latitude);
+                console.log('Longitude: ', longitude);
+                console.log('Temperature: ', temp);
+                console.log('Min: ', min);
+                console.log('Max: ', max);
+                console.log('Weather: ', desc);
                 break;
         
             case 2: 
