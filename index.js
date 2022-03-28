@@ -5,6 +5,7 @@ const main = async() => {
     
     let optSelected;
     const search = new Search();
+
     do {
 
         optSelected = await showMenu();
@@ -16,16 +17,19 @@ const main = async() => {
 
                 // CALL API TO GET THE RESULTS
                 const cities = await search.geoLocations(input);
-
+                
                 // SHOW PLACES TO SELECT ONE OF THEM
                 const cityId = await showPlaces(cities);
 
-                const { id, name, longitude, latitude } = cities.find( city => city.id === cityId );
+                if( cityId === 0 ) continue;
+
+                const { name, longitude, latitude, shortName } = cities.find( city => city.id === cityId );
 
                 // CALL WEATHER API TO GET THE CITY'S WEATHER
                 const { temp, min, max, desc } = await search.weatherForecast(longitude, latitude);
                
                 // RESPONSE (geolocation + weather)
+                console.clear();
                 console.log(`Information of the city: `.green);
                 console.log('City: ', name);
                 console.log('Latitude: ', latitude);
@@ -34,10 +38,16 @@ const main = async() => {
                 console.log('Min: ', min);
                 console.log('Max: ', max);
                 console.log('Weather: ', desc);
-                break;
-        
-            case 2: 
 
+                search.addRecord(shortName);
+
+                break;
+            case 2:
+                if( search.getRecords.length === 0 ) console.log('There is not records to show yet.'.red);
+                search.getRecords.forEach( (record, index) => {
+                    const i = index + 1;
+                    console.log(`${ i }. `.green + record);
+                });
                 break;
         }
 

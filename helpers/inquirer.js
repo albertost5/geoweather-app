@@ -59,7 +59,7 @@ async function readInputCity() {
 async function showPlaces( places  = [] ) {
 
     const choices = places.map(( place, index ) => {
-        const i = index + 1;;
+        const i = index + 1;
         return {
             value: place.id,
             name: `${ i }. `.green + place.name

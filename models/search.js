@@ -1,19 +1,25 @@
 require('dotenv').config();
+const fs = require('fs');
 const axios = require('axios');
 class Search {
-
-    records = [];
+    
+    #records = [];
+    dbFilePath = process.env.DB_PATH + '/' + process.env.FILENAME_DB;
 
     constructor() {
-
+        this.readDb();
     }
 
-    get paramsMapboxGET(){
+    get paramsMapboxGET() {
         return {
             access_token: process.env.MAPBOX_KEY,
             limit: 5,
             language: process.env.LANGUAGE_RESPONSE
         }
+    }
+
+    get getRecords() {
+        return this.#records;
     }
 
     async geoLocations( place = '' ) {
@@ -31,6 +37,7 @@ class Search {
             return response.data.features.map(city => ({
                 id: city.id,
                 name: city.place_name,
+                shortName: city.text,
                 longitude: city.center[0],
                 latitude: city.center[1]
             }));
@@ -69,6 +76,49 @@ class Search {
             return [];
         }
     }
+
+    addRecord( placeName = '' ) {
+        if( this.#records.length == 5 ) {
+            this.#records.unshift(placeName);
+            this.#records.pop();
+        } else {
+            this.#records.unshift(placeName);
+        }
+        // Add the records array to the JSON file.
+        this.addRecordsDb();
+    }
+
+    readDb() {
+        
+        if( !fs.existsSync( process.env.DB_PATH ) ){
+            fs.mkdirSync(process.env.DB_PATH);
+            fs.appendFileSync( this.dbFilePath , '' );
+        } else {
+            try {
+                // JSON content
+                const content = fs.readFileSync( this.dbFilePath , { encoding: 'utf-8' } );
+                JSON.parse(content).records.forEach( city => {
+                    this.#records.push(city);
+                });
+                
+            } catch (error) {
+                console.log('There was an error reading the json file.'.red);
+            }
+            
+        }
+    }
+
+    addRecordsDb() {
+        try { 
+            fs.writeFileSync( this.dbFilePath, JSON.stringify({
+                records:  this.#records
+            }));
+        } catch (error) {
+            console.log('There was an error wrting the json file.'.red);
+        }
+    }
+
+    
 }
 
 module.exports = Search;
