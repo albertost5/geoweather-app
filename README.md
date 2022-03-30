@@ -23,3 +23,9 @@ There are two commands to initialize the app:
 npm start
 node app
 ```
+
+## API
+I have used two API to build the application so in order to make it work, you'll need the API Key for those as it's mentioned in the config section. 
+Check these links, to create an account for free, to get the API Key needed:
+Location: https://www.mapbox.com/
+Weather: https://openweathermap.org/
