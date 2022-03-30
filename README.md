@@ -18,7 +18,7 @@ FILENAME_DB="fileName.json"
 After creating this file you'll be able to run the app.
 
 ## First run
-There is two commands to initialize the app:
+There are two commands to initialize the app:
 ```
 npm start
 node app
